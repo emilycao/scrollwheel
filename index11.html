@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>scrollwheel</title>
+    <style>
+    * { 
+  padding: 0; 
+  margin: 0;
+  }
+  #myimage { 
+  z-index: -100;
+  }
+  .pointArea {
+    border: 5px dashed #23f519;
+    position: absolute;
+  }
+  .pointA,.pointB {
+    width: 45px;
+    height: 200px;
+  }
+  #aData,#bData {
+    width: 45px;
+    background-color: #23f519;
+  }
+  .pointC {
+    width: 200px;
+    height: 45px;
+  }
+  #cData {
+    height: 45px;
+    background-color: #23f519;
+  }
+    </style>
+</head>
+<body>
+  <div id="pointA" class="pointArea pointA">
+    <div id="aData"></div>
+  </div>
+  <div id="pointB" class="pointArea pointB">
+    <div id="bData"></div>
+  </div>
+  <div id="pointC" class="pointArea pointC">
+    <div id="cData"></div>
+  </div>
+  <img id="myimage" src="images/park_pic.jpg" alt="my image"/>
+<script type="text/javascript">
+  window.onload = function () {
+    //添加鼠标滚轮事件处理代码
+      var myimage = $$("myimage");
+      if (myimage.addEventListener) {
+          // IE9, Chrome, Safari, Opera
+          myimage.addEventListener("mousewheel", MouseWheelHandler, false);
+          // Firefox
+          myimage.addEventListener("DOMMouseScroll", MouseWheelHandler, false);
+      }
+      // IE 6/7/8
+      else myimage.attachEvent("onmousewheel", MouseWheelHandler);
+    var pointA = $$('pointA'),
+            pointB = $$('pointB'),
+            pointC = $$('pointC'),
+            aData = $$('aData'),
+            bData = $$('bData'),
+            cData = $$('cData');
+        var imageWidth = myimage.offsetWidth,
+            imageHeight = myimage.offsetHeight
+            opointA = pointA.offsetHeight,
+            opointB = pointB.offsetHeight,
+            opointC = pointC.offsetWidth;
+        pointA.style.cssText = 'left:'+ parseInt(imageWidth) * 0.015 + 'px' + ';top:'+ parseInt(imageHeight) * 0.093 + 'px;';
+        pointB.style.cssText = 'left:'+ parseInt(imageWidth) * 0.965 + 'px' + ';top:'+ parseInt(imageHeight) * 0.093 + 'px;';
+        pointC.style.cssText = 'left:'+ parseInt(imageWidth) * 0.869 + 'px' + ';top:'+ parseInt(imageHeight) * 0.81  + 'px;';
+       var aNum = 28,bNum = 20, cNum = 31, 
+           percent = 210 / 30,
+           alength = aNum * percent,
+           blength = bNum * percent,
+           clength = cNum * percent;
+       if ( alength > opointA ) {
+        pointA.style.border = '5px dashed red';
+        aData.style.height = '200px';
+       }else {
+        aData.style.height = alength + 'px';
+       }
+       if ( blength > opointB ) {
+        pointB.style.border = '5px dashed red';
+        bData.style.height = '200px';
+       }else {
+        bData.style.height = blength + 'px';
+       }
+       if ( clength > opointC ) {
+        pointC.style.border = '5px dashed red';
+        cData.style.width = '200px';
+       }else {
+        cData.style.width = clength + 'px';
+       }
+
+  }
+  function lengthFn (point,data,offset,num,type) {
+    var opoint = $$('point'),
+      odata = $$('data'),
+      offset = opoint.offset,
+      percent = 210 / 30,
+      olength = num * percent;
+    if ( olength > offset ) {
+      opoint.style.border = '5px dashed red';
+      odata.style.type = '200px';
+    }else {
+      odata.style.type = olength + 'px';
+    }
+
+  }
+  function $$(id) {
+    return document.getElementById(id);
+  }
+    
+    //为了让不同浏览器都能支持的处理做法,我们将对Firefox的detail值取反然后返回1或者-1的其中一个
+    function MouseWheelHandler(e) {
+        // cross-browser wheel delta
+        var e = window.event || e; // old IE support
+        var delta = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)));
+        //现在我们直接决定图片的大小范围。以下代码将图片的宽度范围设置在50-800个像素之间
+        var imageWidth = myimage.style.width = Math.max(1200, Math.min(2300, myimage.width + (30 * delta))) + "px";
+        var imageHeight = myimage.offsetHeight;
+        // 最后一点，我们在方法中返回false是为了终止标准的鼠标滚轮事件处理，以防它上下滑动网页
+        var pointA = $$('pointA'),
+            pointB = $$('pointB'),
+            pointC = $$('pointC');
+        pointA.style.cssText = 'left:'+ parseInt(imageWidth) * 0.015 + 'px' + ';top:'+ parseInt(imageHeight) * 0.093 + 'px;';
+        pointB.style.cssText = 'left:'+ parseInt(imageWidth) * 0.965 + 'px' + ';top:'+ parseInt(imageHeight) * 0.093 + 'px;';
+        pointC.style.cssText = 'left:'+ parseInt(imageWidth) * 0.869 + 'px' + ';top:'+ parseInt(imageHeight) * 0.81  + 'px;';
+        return false;
+    }
+    </script>
+</body>
+</html>

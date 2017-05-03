@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>scrollwheel</title>
+    <style>
+    * { 
+	padding: 0; 
+	margin: 0;
+	}
+	#myimage { 
+	z-index: -100;
+	}
+	.pointArea {
+		border: 5px dashed #23f519;
+		position: absolute;
+	}
+	.pointA,.pointB {
+		width: 45px;
+		height: 200px;
+	}
+	#aData,#bData {
+		width: 45px;
+		background-color: #23f519;
+	}
+	.pointC {
+		width: 200px;
+		height: 45px;
+	}
+	#cData {
+		height: 45px;
+		background-color: #23f519;
+	}
+	#popTip {
+		position: absolute;
+		background: #fff;
+		border: 1px solid #eee;
+		padding: 6px;
+	}
+	.content {
+		position: relative;
+	}
+	#close {
+		position: absolute;
+		right: 2px;
+		top: 0;
+		cursor: pointer;
+	}
+    </style>
+</head>
+<body>
+	<div id="popTip" style="display: none;">
+	    <div class="content">
+	        <p id="close">X</p>
+	        <p>车位号：001</p>
+	        <p>车牌号码：HDD001
+	        </p>
+	        <p>姓名：电动车1
+	        </p>
+	        <p>身份证号：300100200001011234</p>
+	        <p>绑定标签号：562906760898
+	        </p>
+	        <p>状态：正常
+	        </p>
+		</div>
+	</div>
+	<div id="pointA" class="pointArea pointA" onclick="showFn('pointA','left')">
+		<div id="aData"></div>
+	</div>
+	<div id="pointB" class="pointArea pointB" onclick="showFn('pointB','right')">
+		<div id="bData"></div>
+	</div>
+	<div id="pointC" class="pointArea pointC" onclick="showFn('pointC','bottom')">
+		<div id="cData"></div>
+	</div>
+	<img id="myimage" src="images/park_pic.jpg" alt="my image"/>
+<script type="text/javascript">
+	window.onload = function () {
+		//添加鼠标滚轮事件处理代码
+	    var myimage = $$("myimage");
+	    if (myimage.addEventListener) {
+	        // IE9, Chrome, Safari, Opera
+	        myimage.addEventListener("mousewheel", MouseWheelHandler, false);
+	        // Firefox
+	        myimage.addEventListener("DOMMouseScroll", MouseWheelHandler, false);
+	    }
+	    // IE 6/7/8
+	    else myimage.attachEvent("onmousewheel", MouseWheelHandler);
+	    new Site ('myimage','pointA','aData',1);
+	    new Site ('myimage','pointB','bData',2);
+	    new Site ('myimage','pointC','cData',3);
+       	new LengthFn ('pointA','aData',3,1);
+       	new LengthFn ('pointB','bData',10,1);
+       	new LengthFn ('pointC','cData',31,0);
+	}
+	
+    
+    //为了让不同浏览器都能支持的处理做法,我们将对Firefox的detail值取反然后返回1或者-1的其中一个
+    function MouseWheelHandler(e) {
+        // cross-browser wheel delta
+        var e = window.event || e; // old IE support
+        var delta = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)));
+        //现在我们直接决定图片的大小范围。以下代码将图片的宽度范围设置在50-800个像素之间
+        var imageWidth = myimage.style.width = Math.max(1200, Math.min(2300, myimage.width + (30 * delta))) + "px";
+        var imageHeight = myimage.offsetHeight;
+        // 最后一点，我们在方法中返回false是为了终止标准的鼠标滚轮事件处理，以防它上下滑动网页
+        new Site ('myimage','pointA','aData',1);
+	    new Site ('myimage','pointB','bData',2);
+	    new Site ('myimage','pointC','cData',3);
+	    new LengthFn ('pointA','aData',3,1);
+       	new LengthFn ('pointB','bData',10,1);
+       	new LengthFn ('pointC','cData',31,0);
+        return false;
+    }
+    /*
+	 *point : 例如 pointA
+	 *data : 例如 aData
+	 *myimage : 是背景图片
+	 */
+	function Site (myimage,point,data,type) {
+		var opoint = $$(point),
+			odata = $$(data),
+			myimage = $$(myimage),
+			imageWidth = myimage.offsetWidth,
+            imageHeight = myimage.offsetHeight;
+		if ( type === 1 ) {
+			opoint.style.cssText = 'left:'+ parseInt(imageWidth) * 0.015 + 'px' + ';top:'+ parseInt(imageHeight) * 0.093 + 'px;';
+		}else if ( type === 2 ) {
+			opoint.style.cssText = 'left:'+ parseInt(imageWidth) * 0.965 + 'px' + ';top:'+ parseInt(imageHeight) * 0.093 + 'px;';
+		}else if ( type === 3 ) {
+			opoint.style.cssText = 'left:'+ parseInt(imageWidth) * 0.869 + 'px' + ';top:'+ parseInt(imageHeight) * 0.81  + 'px;';
+		}
+
+	}
+	/*
+	 *point : 例如 pointA
+	 *data : 例如 aData
+	 * num ：是电动车停放的数量
+	 * type : 如0或1
+	 */
+	function LengthFn (point,data,num,type) {
+		var opoint = $$(point),
+			odata = $$(data),
+			percent = 210 / 30,
+			olength = num * percent;
+		if ( type === 1) {
+			var offset = opoint.offsetHeight;
+			if ( olength > offset ) {
+				opoint.style.border = '5px dashed red';
+				odata.style.height = '200px';
+			}else {
+				odata.style.height = olength + 'px';
+			}
+		} else if ( type === 0 ) {
+			var offset = opoint.offsetWidth;
+			if ( olength > offset ) {
+				opoint.style.border = '5px dashed red';
+				odata.style.width = '200px';
+			}else {
+				odata.style.width = olength + 'px';
+			}
+		}
+		
+
+	}
+	/**
+	 * [showFn description]
+	 * @param  {[type]} id   [description] 点击对象
+	 * @param  {[type]} type [description] 分为：left,right,bottom
+	 * @return {[type]}      [description]
+	 */
+	function showFn (id,type) {
+		var oLeft = pos(id).left,
+			oTop = pos(id).top,
+			popTip = $$('popTip'),
+			oclose = $$('close');
+		if (type === 'left') {
+			popTip.style.cssText = 'display:block;left:' + (parseFloat(oLeft) + parseFloat($$(id).offsetWidth)) + 'px;top:' + oTop + ';';
+		}else if (type === 'right') {
+			popTip.style.cssText = 'display:block;left:' + (parseFloat(oLeft) - parseFloat($$(id).offsetWidth) - 160) + 'px;top:' + oTop + ';';
+		}else if (type === 'bottom') {
+			popTip.style.cssText = 'display:block;left:' + (parseFloat(oLeft) - parseFloat($$(id).offsetWidth)) + 'px;top:' + oTop + ';';
+		}
+		
+		oclose.onclick = function () {
+			popTip.style.display = 'none';
+		}
+	}
+	function $$(id) {
+		return document.getElementById(id);
+	}
+	/** 
+	*获取页面某个元素当前的样式：(譬如获取当前INPUT的宽度，border的样式、border颜色等) 
+	*@param domID 文档对象的ID 或者直接传DOM文档对象 
+	*@param propName  样式属性 
+	*@return 返回当前元素的样式 
+	*注意：propName不要聚合写法(eg:borer)，要分拆写法(eg:borderStyle 只支持IE)，越详细越好(eg:borderLeftStyle 支持所有浏览器) 
+	* 
+	*/  
+	var getStyle = function(domID,propName){  
+	    var dom = null;  
+	    if(typeof(domID)=="object" && !!domID.tagName==true){  
+	        dom = domID;//直接传递文档对象  
+	    }else{  
+	        dom = document.getElementById(domID);//传递文档对象的ID  
+	    }  
+	    if(dom==null){return "";}  
+	    //兼容IE，chrome，FF等浏览器的写法：【 注意属性写法规则：严格要求写全名称，否则失效返回"" 】  
+	    var currentStyle = dom.currentStyle ||document.defaultView.getComputedStyle(dom,null);    
+	    return currentStyle[propName] ||"";  
+	}   
+	function pos (ev) {
+		var div=$$(ev);
+		var top,left;
+		left = getStyle(div,'left');
+		top = getStyle(div,'top');
+		
+		return {
+			left : left,
+			top : top
+		}
+	};
+
+
+
+    </script>
+</body>
+</html>
